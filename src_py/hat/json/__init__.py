@@ -387,17 +387,7 @@ def encode_file(data: Data,
             raise ValueError('can not determine format from path suffix')
 
     with open(path, 'w', encoding='utf-8') as f:
-        if format == Format.JSON:
-            json.dump(data, f, indent=indent)
-
-        elif format == Format.YAML:
-            dumper = (yaml.CSafeDumper if hasattr(yaml, 'CSafeDumper')
-                      else yaml.SafeDumper)
-            yaml.dump(data, f, indent=indent, Dumper=dumper,
-                      explicit_start=True, explicit_end=True)
-
-        else:
-            raise ValueError('unsupported format')
+        encode_stream(data, f, format, indent)
 
 
 def decode_file(path: pathlib.PurePath,
@@ -421,15 +411,54 @@ def decode_file(path: pathlib.PurePath,
             raise ValueError('can not determine format from path suffix')
 
     with open(path, 'r', encoding='utf-8') as f:
-        if format == Format.JSON:
-            return json.load(f)
+        return decode_stream(f, format)
 
-        if format == Format.YAML:
-            loader = (yaml.CSafeLoader if hasattr(yaml, 'CSafeLoader')
-                      else yaml.SafeLoader)
-            return yaml.load(f, Loader=loader)
 
+def encode_stream(data: Data,
+                  stream: io.TextIOBase,
+                  format: Format = Format.JSON,
+                  indent: typing.Optional[int] = 4):
+    """Encode JSON data to stream.
+
+    Args:
+        data: JSON data
+        stream: output stream
+        format: encoding format
+        indent: indentation size
+
+    """
+    if format == Format.JSON:
+        json.dump(data, stream, indent=indent)
+
+    elif format == Format.YAML:
+        dumper = (yaml.CSafeDumper if hasattr(yaml, 'CSafeDumper')
+                  else yaml.SafeDumper)
+        yaml.dump(data, stream, indent=indent, Dumper=dumper,
+                  explicit_start=True, explicit_end=True)
+
+    else:
         raise ValueError('unsupported format')
+
+
+def decode_stream(stream: io.TextIOBase,
+                  format: Format = Format.JSON
+                  ) -> Data:
+    """Decode JSON data from stream.
+
+    Args:
+        stream: input stream
+        format: encoding format
+
+    """
+    if format == Format.JSON:
+        return json.load(stream)
+
+    if format == Format.YAML:
+        loader = (yaml.CSafeLoader if hasattr(yaml, 'CSafeLoader')
+                  else yaml.SafeLoader)
+        return yaml.load(stream, Loader=loader)
+
+    raise ValueError('unsupported format')
 
 
 class Storage:
