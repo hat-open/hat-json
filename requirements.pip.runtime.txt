@@ -1,4 +1,4 @@
-hat-util >= 0.5.4
-jsonpatch >= 1.32
-jsonschema >= 3.2.0
-pyyaml >= 5.4.1
+hat-util ~= 0.5.5
+jsonpatch ~= 1.32
+jsonschema ~= 4.3.2
+pyyaml ~= 6.0

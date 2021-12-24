@@ -606,11 +606,12 @@ class SchemaRepository:
             self._load_schema(schema)
 
     def _load_schema(self, schema):
-        meta_schema_id = urllib.parse.urldefrag(schema.get('$schema', '')).url
-        if meta_schema_id not in jsonschema.validators.meta_schemas:
-            meta_schema_id = jsonschema.Draft7Validator.META_SCHEMA['$schema']
-            schema = dict(schema)
-            schema['$schema'] = meta_schema_id
+        if '$schema' in schema:
+            meta_schema_id = urllib.parse.urldefrag(schema['$schema']).url
+            if (not hasattr(jsonschema.validators, '_META_SCHEMAS') or
+                    meta_schema_id not in jsonschema.validators._META_SCHEMAS):
+                schema = dict(schema)
+                del schema['$schema']
 
         uri = urllib.parse.urlparse(schema['id'])
         path = uri.netloc + uri.path
