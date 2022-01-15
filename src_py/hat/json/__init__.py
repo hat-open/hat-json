@@ -11,6 +11,7 @@ import urllib.parse
 
 import jsonpatch
 import jsonschema.validators
+import pytomlpp
 import yaml
 
 from hat import util
@@ -28,12 +29,16 @@ Data: typing.Type = typing.Union[None, bool, int, float, str, Array, Object]
 """JSON data type identifier."""
 util.register_type_alias('Data')
 
-Format = enum.Enum('Format', ['JSON', 'YAML'])
-"""Encoding format"""
-
 Path: typing.Type = typing.Union[int, str, typing.List['Path']]
 """Data path"""
 util.register_type_alias('Path')
+
+
+class Format(enum.Enum):
+    """Encoding format"""
+    JSON = 'json'
+    YAML = 'yaml'
+    TOML = 'toml'
 
 
 def equals(a: Data,
@@ -325,6 +330,8 @@ def encode(data: Data,
            ) -> str:
     """Encode JSON data.
 
+    In case of TOML format, data must be JSON Object.
+
     Args:
         data: JSON data
         format: encoding format
@@ -338,6 +345,9 @@ def encode(data: Data,
         dumper = (yaml.CSafeDumper if hasattr(yaml, 'CSafeDumper')
                   else yaml.SafeDumper)
         return str(yaml.dump(data, indent=indent, Dumper=dumper))
+
+    if format == Format.TOML:
+        return pytomlpp.dumps(data)
 
     raise ValueError('unsupported format')
 
@@ -360,7 +370,24 @@ def decode(data_str: str,
                   else yaml.SafeLoader)
         return yaml.load(io.StringIO(data_str), Loader=loader)
 
+    if format == Format.TOML:
+        return pytomlpp.loads(data_str)
+
     raise ValueError('unsupported format')
+
+
+def get_file_format(path: pathlib.PurePath) -> Format:
+    """Detect file format based on path suffix"""
+    if path.suffix == '.json':
+        return Format.JSON
+
+    if path.suffix in ('.yaml', '.yml'):
+        return Format.YAML
+
+    if path.suffix == '.toml':
+        return Format.TOML
+
+    raise ValueError('can not determine format from path suffix')
 
 
 def encode_file(data: Data,
@@ -371,6 +398,8 @@ def encode_file(data: Data,
 
     If `format` is ``None``, encoding format is derived from path suffix.
 
+    In case of TOML format, data must be JSON Object.
+
     Args:
         data: JSON data
         path: file path
@@ -379,12 +408,7 @@ def encode_file(data: Data,
 
     """
     if format is None:
-        if path.suffix == '.json':
-            format = Format.JSON
-        elif path.suffix in ('.yaml', '.yml'):
-            format = Format.YAML
-        else:
-            raise ValueError('can not determine format from path suffix')
+        format = get_file_format(path)
 
     with open(path, 'w', encoding='utf-8') as f:
         encode_stream(data, f, format, indent)
@@ -403,12 +427,7 @@ def decode_file(path: pathlib.PurePath,
 
     """
     if format is None:
-        if path.suffix == '.json':
-            format = Format.JSON
-        elif path.suffix in ('.yaml', '.yml'):
-            format = Format.YAML
-        else:
-            raise ValueError('can not determine format from path suffix')
+        format = get_file_format(path)
 
     with open(path, 'r', encoding='utf-8') as f:
         return decode_stream(f, format)
@@ -419,6 +438,8 @@ def encode_stream(data: Data,
                   format: Format = Format.JSON,
                   indent: typing.Optional[int] = 4):
     """Encode JSON data to stream.
+
+    In case of TOML format, data must be JSON Object.
 
     Args:
         data: JSON data
@@ -435,6 +456,9 @@ def encode_stream(data: Data,
                   else yaml.SafeDumper)
         yaml.dump(data, stream, indent=indent, Dumper=dumper,
                   explicit_start=True, explicit_end=True)
+
+    elif format == Format.TOML:
+        pytomlpp.dump(data, stream)
 
     else:
         raise ValueError('unsupported format')
@@ -457,6 +481,9 @@ def decode_stream(stream: io.TextIOBase,
         loader = (yaml.CSafeLoader if hasattr(yaml, 'CSafeLoader')
                   else yaml.SafeLoader)
         return yaml.load(stream, Loader=loader)
+
+    if format == Format.TOML:
+        return pytomlpp.load(stream)
 
     raise ValueError('unsupported format')
 

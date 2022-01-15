@@ -201,13 +201,17 @@ Example usage::
 Encoding/decoding
 -----------------
 
-Encoding of JSON data can be based on JSON or YAML format::
+Encoding of JSON data can be based on JSON, YAML or TOML format::
 
-    Format = enum.Enum('Format', ['JSON', 'YAML'])
+    class Format(enum.Enum):
+        JSON = 'json'
+        YAML = 'yaml'
+        TOML = 'toml'
 
 Encoding/decoding implementations used in `hat.json` are based on
-`json standard library <https://docs.python.org/3/library/json.html>`_ and
-`PyYAML library <https://pypi.org/project/PyYAML/>`_.
+`json standard library <https://docs.python.org/3/library/json.html>`_ ,
+`PyYAML library <https://pypi.org/project/PyYAML/>`_ and
+`pytomlpp library <https://pypi.org/project/pytomlpp/>`_ .
 
 For encoding to string, functions `hat.json.encode` and `hat.json.decode` can
 be used::
