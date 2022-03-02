@@ -74,7 +74,7 @@ def equals(a: Data,
 def clone(data: Data) -> Data:
     """Deep clone data
 
-    This function recursivly creates new instances of array and object data
+    This function recursively creates new instances of array and object data
     based on input data. Resulting json data is equal to provided data.
 
     Example::
@@ -538,12 +538,12 @@ class SchemaRepository:
     with a suffix '.json', '.yml' or '.yaml', json serializable data is decoded
     from the file. Otherwise, it is assumed that path points to a directory,
     which is recursively searched for json and yaml files. All decoded schemas
-    are added to the repository. If a schema with the same `id` was previosly
+    are added to the repository. If a schema with the same `id` was previously
     added, an exception is raised.
 
     If an argument is of type ``Data``, it should be a json serializable data
     representation of a JSON schema. If a schema with the same `id` was
-    previosly added, an exception is raised.
+    previously added, an exception is raised.
 
     If an argument is of type ``SchemaRepository``, its schemas are added to
     the new repository. Previously added schemas with the same `id` are
@@ -618,8 +618,8 @@ class SchemaRepository:
         repo._data = data
         return repo
 
-    def _get_schema(self, scheme_id):
-        uri = urllib.parse.urlparse(scheme_id)
+    def _get_schema(self, schema_id):
+        uri = urllib.parse.urlparse(schema_id)
         path = uri.netloc + uri.path
         return self._data[uri.scheme][path]
 
@@ -666,7 +666,7 @@ json_schema_repo: SchemaRepository = (
 """JSON Schema repository with generic schemas"""
 
 
-# check upstream changes in jsonpatch and validate performance inpact
+# check upstream changes in jsonpatch and validate performance impact
 
 # def _monkeypatch_jsonpatch():
 #     """Monkeypatch jsonpatch.

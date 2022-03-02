@@ -146,7 +146,7 @@ Example usage::
     result = set_(data, 4, 4)
     assert result == [1, 2, 3, None, 4]
 
-Function `hat.json.remove` is used for creating new data based on inpuit data
+Function `hat.json.remove` is used for creating new data based on input data
 where subset of input data referenced by path is removed. This function
 doesn't modify input data and tries to optimally reuse parts of input data
 which are the same as in output data::
