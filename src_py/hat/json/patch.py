@@ -1,3 +1,5 @@
+"""JSON Patch"""
+
 import jsonpatch
 
 from hat.json.data import Data

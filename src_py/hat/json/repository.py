@@ -4,6 +4,7 @@ import itertools
 import pathlib
 import typing
 import urllib.parse
+import weakref
 
 from hat.json.data import Data
 from hat.json.encoder import decode_file
@@ -39,7 +40,7 @@ class SchemaRepository:
     def __init__(self, *args: typing.Union[pathlib.PurePath,
                                            Data,
                                            'SchemaRepository']):
-        self._validators = {}
+        self._validators = weakref.WeakValueDictionary()
         self._data = {}
         for arg in args:
             if isinstance(arg, pathlib.PurePath):
@@ -48,6 +49,36 @@ class SchemaRepository:
                 self._load_repository(arg)
             else:
                 self._load_schema(arg)
+
+    def get_uri_schemes(self) -> typing.Iterable[str]:
+        """Get URI schemes stored in repository"""
+        return self._data.keys()
+
+    def get_schema_ids(self,
+                       uri_schemes: typing.Optional[typing.Iterable[str]] = None  # NOQA
+                       ) -> typing.Iterable[str]:
+        """Get schema ids stored in repository
+
+        If `uri_schemes` is ``None``, all schema ids are returned. Otherwise,
+        only schema ids that have one of provided URI scheme are returned.
+
+        """
+        if uri_schemes is None:
+            uri_schemes = self._data.keys()
+
+        for uri_scheme in uri_schemes:
+            schemas = self._data.get(uri_scheme)
+            if not schemas:
+                continue
+
+            for path in schemas.keys():
+                yield f'{uri_scheme}://{path}'
+
+    def get_schema(self, schema_id: str) -> Data:
+        """Get stored schema based on schema id"""
+        uri = urllib.parse.urlparse(schema_id)
+        path = uri.netloc + uri.path
+        return self._data[uri.scheme][path]
 
     def validate(self,
                  schema_id: str,
@@ -58,6 +89,7 @@ class SchemaRepository:
         Args:
             schema_id: JSON schema identifier
             data: data to be validated
+            validator_cls: validator implementation
 
         Raises:
             Exception
@@ -65,7 +97,7 @@ class SchemaRepository:
         """
         validator = self._validators.get(validator_cls)
         if validator is None:
-            validator = validator_cls(self._data)
+            validator = validator_cls(self)
             self._validators[validator_cls] = validator
 
         validator.validate(schema_id, data)
