@@ -9,9 +9,8 @@ from hat.json.data import (Data,
                            flatten)
 
 
-Path: typing.Type = typing.Union[int, str, typing.List['Path']]
+Path = typing.Union[int, str, typing.List['Path']]
 """JSON Path"""
-util.register_type_alias('Path')
 
 
 def get(data: Data,
@@ -225,3 +224,7 @@ class Storage:
         """Remove data"""
         self._data = remove(self._data, path)
         self._change_cbs.notify(self._data)
+
+
+# HACK type alas
+util.register_type_alias('Path')

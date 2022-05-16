@@ -3,11 +3,12 @@ import urllib.parse
 import jsonschema.validators
 
 from hat.json.data import Data
+from hat.json.validator.common import Repository
 
 
 class JsonSchemaValidator:
 
-    def __init__(self, repo: 'hat.json.SchemaRepository'):  # NOQA
+    def __init__(self, repo: Repository):
         self._repo = repo
 
     def validate(self, schema_id: str, data: Data):

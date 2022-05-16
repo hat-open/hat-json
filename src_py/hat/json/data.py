@@ -5,17 +5,14 @@ import typing
 from hat import util
 
 
-Array: typing.Type = typing.List['Data']
+Array = typing.List['Data']
 """JSON Array"""
-util.register_type_alias('Array')
 
-Object: typing.Type = typing.Dict[str, 'Data']
+Object = typing.Dict[str, 'Data']
 """JSON Object"""
-util.register_type_alias('Object')
 
-Data: typing.Type = typing.Union[None, bool, int, float, str, Array, Object]
+Data = typing.Union[None, bool, int, float, str, Array, Object]
 """JSON data type identifier."""
-util.register_type_alias('Data')
 
 
 def equals(a: Data,
@@ -92,3 +89,9 @@ def flatten(data: Data
             yield from flatten(i)
     else:
         yield data
+
+
+# HACK type alias
+util.register_type_alias('Array')
+util.register_type_alias('Object')
+util.register_type_alias('Data')

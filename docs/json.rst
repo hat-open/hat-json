@@ -41,9 +41,9 @@ Mapping between JSON data types and built in types:
 
 According to previous mapping, this library defines following types::
 
-    Array: typing.Type = typing.List['Data']
-    Object: typing.Type = typing.Dict[str, 'Data']
-    Data: typing.Type = typing.Union[None, bool, int, float, str, Array, Object]
+    Array = typing.List['Data']
+    Object = typing.Dict[str, 'Data']
+    Data = typing.Union[None, bool, int, float, str, Array, Object]
 
 Because in Python `bool` is subtype of `int`, ``==`` operator can't be used
 if strict comparison between JSON data is required. In this cases, function
@@ -90,7 +90,7 @@ JSON data path
 Path can be used as efficient reference to subset of deeply nested JSON
 data structure::
 
-    Path: typing.Type = typing.Union[int, str, typing.List['Path']]
+    Path = typing.Union[int, str, typing.List['Path']]
 
 Determining data subset is defined by recursive algorithm which takes into
 account Path type:
@@ -279,4 +279,4 @@ API
 
 API reference is available as part of generated documentation:
 
-    * `Python hat.json module <py_api/hat/json/index.html>`_
+    * `Python hat.json module <py_api/hat/json.html>`_
