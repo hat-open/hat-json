@@ -46,8 +46,7 @@ def task_build():
             name='hat-json',
             description='Hat JSON library',
             url='https://github.com/hat-open/hat-json',
-            license=common.License.APACHE2,
-            packages=['hat'])
+            license=common.License.APACHE2)
 
     return {'actions': [build],
             'task_dep': ['json_schema_repo']}

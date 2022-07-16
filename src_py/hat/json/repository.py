@@ -1,5 +1,6 @@
 """JSON Schema repository"""
 
+import importlib.resources
 import itertools
 import pathlib
 import typing
@@ -171,11 +172,9 @@ _meta_schema_ids = {"http://json-schema.org/draft-03/schema#",
                     "https://json-schema.org/draft/2019-09/schema",
                     "https://json-schema.org/draft/2020-12/schema"}
 
-_json_schema_repo_path = (pathlib.Path(__file__).parent /
-                          'json_schema_repo.json')
 
-json_schema_repo: SchemaRepository = (
-    SchemaRepository.from_json(_json_schema_repo_path)
-    if _json_schema_repo_path.exists()
-    else SchemaRepository())
-"""JSON Schema repository with generic schemas"""
+with importlib.resources.path(__package__, 'json_schema_repo.json') as _path:
+    json_schema_repo: SchemaRepository = (SchemaRepository.from_json(_path)
+                                          if _path.exists()
+                                          else SchemaRepository())
+    """JSON Schema repository with generic schemas"""
