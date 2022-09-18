@@ -26,6 +26,7 @@ from hat.json.repository import (SchemaRepository,
 from hat.json.validator import (Validator,
                                 DefaultValidator,
                                 JsonSchemaValidator)
+from hat.json import vt
 
 
 __all__ = ['Array',
@@ -53,4 +54,5 @@ __all__ = ['Array',
            'json_schema_repo',
            'Validator',
            'DefaultValidator',
-           'JsonSchemaValidator']
+           'JsonSchemaValidator',
+           'vt']
