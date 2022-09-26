@@ -6,7 +6,8 @@ import json
 import pathlib
 import typing
 
-import pytomlpp
+import tomli
+import tomli_w
 import yaml
 
 from hat.json.data import Data
@@ -42,7 +43,7 @@ def encode(data: Data,
         return str(yaml.dump(data, indent=indent, Dumper=dumper))
 
     if format == Format.TOML:
-        return pytomlpp.dumps(data)
+        return tomli_w.dumps(data)
 
     raise ValueError('unsupported format')
 
@@ -66,7 +67,7 @@ def decode(data_str: str,
         return yaml.load(io.StringIO(data_str), Loader=loader)
 
     if format == Format.TOML:
-        return pytomlpp.loads(data_str)
+        return tomli.loads(data_str)
 
     raise ValueError('unsupported format')
 
@@ -105,7 +106,10 @@ def encode_file(data: Data,
     if format is None:
         format = get_file_format(path)
 
-    with open(path, 'w', encoding='utf-8') as f:
+    flags = 'w' if format != Format.TOML else 'wb'
+    encoding = 'utf-8' if format != Format.TOML else None
+
+    with open(path, flags, encoding=encoding) as f:
         encode_stream(data, f, format, indent)
 
 
@@ -124,17 +128,23 @@ def decode_file(path: pathlib.PurePath,
     if format is None:
         format = get_file_format(path)
 
-    with open(path, 'r', encoding='utf-8') as f:
+    flags = 'r' if format != Format.TOML else 'rb'
+    encoding = 'utf-8' if format != Format.TOML else None
+
+    with open(path, flags, encoding=encoding) as f:
         return decode_stream(f, format)
 
 
 def encode_stream(data: Data,
-                  stream: io.TextIOBase,
+                  stream: typing.Union[io.TextIOBase, io.RawIOBase],
                   format: Format = Format.JSON,
                   indent: typing.Optional[int] = 4):
     """Encode JSON data to stream.
 
     In case of TOML format, data must be JSON Object.
+
+    In case of TOML format, `stream` should be `io.RawIOBase`. For
+    other formats, `io.TextIOBase` is expected.
 
     Args:
         data: JSON data
@@ -153,16 +163,19 @@ def encode_stream(data: Data,
                   explicit_start=True, explicit_end=True)
 
     elif format == Format.TOML:
-        pytomlpp.dump(data, stream)
+        tomli_w.dump(data, stream)
 
     else:
         raise ValueError('unsupported format')
 
 
-def decode_stream(stream: io.TextIOBase,
+def decode_stream(stream: typing.Union[io.TextIOBase, io.RawIOBase],
                   format: Format = Format.JSON
                   ) -> Data:
     """Decode JSON data from stream.
+
+    In case of TOML format, `stream` should be `io.RawIOBase`. For
+    other formats, `io.TextIOBase` is expected.
 
     Args:
         stream: input stream
@@ -178,6 +191,6 @@ def decode_stream(stream: io.TextIOBase,
         return yaml.load(stream, Loader=loader)
 
     if format == Format.TOML:
-        return pytomlpp.load(stream)
+        return tomli.load(stream)
 
     raise ValueError('unsupported format')
