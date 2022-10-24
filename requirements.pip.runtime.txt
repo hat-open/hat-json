@@ -1,4 +1,4 @@
-hat-util ~= 0.5.8
+hat-util ~= 0.6.6
 jsonpatch ~= 1.32
 jsonschema ~= 4.7.2
 pyyaml ~= 6.0
