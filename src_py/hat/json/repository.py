@@ -173,8 +173,13 @@ _meta_schema_ids = {"http://json-schema.org/draft-03/schema#",
                     "https://json-schema.org/draft/2020-12/schema"}
 
 
-with importlib.resources.path(__package__, 'json_schema_repo.json') as _path:
-    json_schema_repo: SchemaRepository = (SchemaRepository.from_json(_path)
-                                          if _path.exists()
-                                          else SchemaRepository())
-    """JSON Schema repository with generic schemas"""
+try:
+    with importlib.resources.path(__package__, 'json_schema_repo.json') as _p:
+        json_schema_repo: SchemaRepository = (SchemaRepository.from_json(_p)
+                                              if _p.exists()
+                                              else SchemaRepository())
+        """JSON Schema repository with generic schemas"""
+
+# cpython 3.8 fix
+except FileNotFoundError:
+    json_schema_repo = SchemaRepository()
