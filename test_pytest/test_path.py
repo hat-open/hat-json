@@ -200,6 +200,8 @@ def test_storage():
 
     assert storage.data == 123
     assert storage.get([]) == 123
+    assert storage.get(['a', 'b', 'c']) is None
+    assert storage.get(['a', 'b', 'c'], 123) == 123
 
     storage.set(['a', 'b', 'c'], 123)
     assert storage.data == {'a': {'b': {'c': 123}}}

@@ -211,9 +211,9 @@ class Storage:
         """Register data change callback"""
         return self._change_cbs.register(cb)
 
-    def get(self, path: Path):
+    def get(self, path: Path, default: typing.Optional[Data] = None):
         """Get data"""
-        return get(self._data, path)
+        return get(self._data, path, default)
 
     def set(self, path: Path, value: Data):
         """Set data"""
