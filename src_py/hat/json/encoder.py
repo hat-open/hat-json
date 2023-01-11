@@ -35,7 +35,7 @@ def encode(data: Data,
 
     """
     if format == Format.JSON:
-        return json.dumps(data, indent=indent)
+        return json.dumps(data, indent=indent, allow_nan=False)
 
     if format == Format.YAML:
         dumper = (yaml.CSafeDumper if hasattr(yaml, 'CSafeDumper')
@@ -154,7 +154,7 @@ def encode_stream(data: Data,
 
     """
     if format == Format.JSON:
-        json.dump(data, stream, indent=indent)
+        json.dump(data, stream, indent=indent, allow_nan=False)
 
     elif format == Format.YAML:
         dumper = (yaml.CSafeDumper if hasattr(yaml, 'CSafeDumper')
