@@ -4,7 +4,6 @@ import enum
 import io
 import json
 import pathlib
-import typing
 
 import tomli
 import tomli_w
@@ -22,7 +21,7 @@ class Format(enum.Enum):
 
 def encode(data: Data,
            format: Format = Format.JSON,
-           indent: typing.Optional[int] = None
+           indent: int | None = None
            ) -> str:
     """Encode JSON data.
 
@@ -88,8 +87,8 @@ def get_file_format(path: pathlib.PurePath) -> Format:
 
 def encode_file(data: Data,
                 path: pathlib.PurePath,
-                format: typing.Optional[Format] = None,
-                indent: typing.Optional[int] = 4):
+                format: Format | None = None,
+                indent: int | None = 4):
     """Encode JSON data to file.
 
     If `format` is ``None``, encoding format is derived from path suffix.
@@ -114,7 +113,7 @@ def encode_file(data: Data,
 
 
 def decode_file(path: pathlib.PurePath,
-                format: typing.Optional[Format] = None
+                format: Format | None = None
                 ) -> Data:
     """Decode JSON data from file.
 
@@ -136,9 +135,9 @@ def decode_file(path: pathlib.PurePath,
 
 
 def encode_stream(data: Data,
-                  stream: typing.Union[io.TextIOBase, io.RawIOBase],
+                  stream: io.TextIOBase | io.RawIOBase,
                   format: Format = Format.JSON,
-                  indent: typing.Optional[int] = 4):
+                  indent: int | None = 4):
     """Encode JSON data to stream.
 
     In case of TOML format, data must be JSON Object.
@@ -169,7 +168,7 @@ def encode_stream(data: Data,
         raise ValueError('unsupported format')
 
 
-def decode_stream(stream: typing.Union[io.TextIOBase, io.RawIOBase],
+def decode_stream(stream: io.TextIOBase | io.RawIOBase,
                   format: Format = Format.JSON
                   ) -> Data:
     """Decode JSON data from stream.

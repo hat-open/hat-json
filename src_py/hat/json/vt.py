@@ -1,7 +1,6 @@
 """Virtual tree XML parser"""
 
 import os
-import typing
 import xml.sax
 import xml.sax.handler
 import xml.sax.xmlreader
@@ -9,7 +8,7 @@ import xml.sax.xmlreader
 from hat.json.data import Data
 
 
-def parse(file: typing.Union[os.PathLike, xml.sax.xmlreader.InputSource]
+def parse(file: os.PathLike | xml.sax.xmlreader.InputSource
           ) -> Data:
     r"""Parse XML document into virtual tree
 

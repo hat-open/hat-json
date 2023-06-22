@@ -1,16 +1,15 @@
 """JSON Schema repository"""
 
+from typing import ForwardRef, Iterable, Type
 import importlib.resources
 import itertools
 import pathlib
-import typing
 import urllib.parse
 import weakref
 
 from hat.json.data import Data
 from hat.json.encoder import decode_file
-from hat.json.validator import (Validator,
-                                DefaultValidator)
+from hat.json.validator import DefaultValidator, Validator
 
 
 class SchemaRepository:
@@ -38,9 +37,9 @@ class SchemaRepository:
 
     """
 
-    def __init__(self, *args: typing.Union[pathlib.PurePath,
-                                           Data,
-                                           'SchemaRepository']):
+    def __init__(self, *args: (pathlib.PurePath |
+                               Data |
+                               ForwardRef('SchemaRepository'))):
         self._validators = weakref.WeakValueDictionary()
         self._data = {}
         for arg in args:
@@ -51,13 +50,13 @@ class SchemaRepository:
             else:
                 self._load_schema(arg)
 
-    def get_uri_schemes(self) -> typing.Iterable[str]:
+    def get_uri_schemes(self) -> Iterable[str]:
         """Get URI schemes stored in repository"""
         return self._data.keys()
 
     def get_schema_ids(self,
-                       uri_schemes: typing.Optional[typing.Iterable[str]] = None  # NOQA
-                       ) -> typing.Iterable[str]:
+                       uri_schemes: Iterable[str] | None = None
+                       ) -> Iterable[str]:
         """Get schema ids stored in repository
 
         If `uri_schemes` is ``None``, all schema ids are returned. Otherwise,
@@ -84,7 +83,7 @@ class SchemaRepository:
     def validate(self,
                  schema_id: str,
                  data: Data,
-                 validator_cls: typing.Type[Validator] = DefaultValidator):
+                 validator_cls: Type[Validator] = DefaultValidator):
         """Validate data against JSON schema.
 
         Args:
@@ -114,8 +113,7 @@ class SchemaRepository:
         return self._data
 
     @staticmethod
-    def from_json(data: typing.Union[pathlib.PurePath,
-                                     Data]
+    def from_json(data: pathlib.PurePath | Data
                   ) -> 'SchemaRepository':
         """Create new repository from content exported as json serializable
         data.
@@ -174,12 +172,10 @@ _meta_schema_ids = {"http://json-schema.org/draft-03/schema",
 
 
 try:
-    with importlib.resources.path(__package__, 'json_schema_repo.json') as _p:
-        json_schema_repo: SchemaRepository = (SchemaRepository.from_json(_p)
-                                              if _p.exists()
-                                              else SchemaRepository())
+    with importlib.resources.as_file(importlib.resources.files(__package__) /
+                                     'json_schema_repo.json') as _p:
+        json_schema_repo: SchemaRepository = SchemaRepository.from_json(_p)
         """JSON Schema repository with generic schemas"""
 
-# cpython 3.8 fix
 except FileNotFoundError:
     json_schema_repo = SchemaRepository()

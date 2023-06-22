@@ -1,21 +1,20 @@
 """JSON Path"""
 
+from typing import Callable, ForwardRef, TypeAlias
 import collections
 import itertools
-import typing
 
 from hat import util
-from hat.json.data import (Data,
-                           flatten)
+from hat.json.data import Data, flatten
 
 
-Path = typing.Union[int, str, typing.List['Path']]
+Path: TypeAlias = int | str | list[ForwardRef('Path')]
 """JSON Path"""
 
 
 def get(data: Data,
         path: Path,
-        default: typing.Optional[Data] = None
+        default: Data | None = None
         ) -> Data:
     """Get data element referenced by path
 
@@ -206,12 +205,12 @@ class Storage:
         return self._data
 
     def register_change_cb(self,
-                           cb: typing.Callable[[Data], None]
+                           cb: Callable[[Data], None]
                            ) -> util.RegisterCallbackHandle:
         """Register data change callback"""
         return self._change_cbs.register(cb)
 
-    def get(self, path: Path, default: typing.Optional[Data] = None):
+    def get(self, path: Path, default: Data | None = None):
         """Get data"""
         return get(self._data, path, default)
 
@@ -224,7 +223,3 @@ class Storage:
         """Remove data"""
         self._data = remove(self._data, path)
         self._change_cbs.notify(self._data)
-
-
-# HACK type alas
-util.register_type_alias('Path')
