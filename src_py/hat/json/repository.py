@@ -1,6 +1,6 @@
 """JSON Schema repository"""
 
-from typing import ForwardRef, Iterable, Type
+from typing import Iterable, Type, Union
 import importlib.resources
 import itertools
 import pathlib
@@ -37,9 +37,9 @@ class SchemaRepository:
 
     """
 
-    def __init__(self, *args: (pathlib.PurePath |
-                               Data |
-                               ForwardRef('SchemaRepository'))):
+    def __init__(self, *args: Union[pathlib.PurePath,
+                                    Data,
+                                    'SchemaRepository']):
         self._validators = weakref.WeakValueDictionary()
         self._data = {}
         for arg in args:
