@@ -1,9 +1,9 @@
 """JSON Schema repository"""
 
-from typing import Iterable, Type, Union
 import importlib.resources
 import itertools
 import pathlib
+import typing
 import urllib.parse
 import weakref
 
@@ -37,9 +37,9 @@ class SchemaRepository:
 
     """
 
-    def __init__(self, *args: Union[pathlib.PurePath,
-                                    Data,
-                                    'SchemaRepository']):
+    def __init__(self, *args: typing.Union[pathlib.PurePath,
+                                           Data,
+                                           'SchemaRepository']):
         self._validators = weakref.WeakValueDictionary()
         self._data = {}
         for arg in args:
@@ -50,13 +50,13 @@ class SchemaRepository:
             else:
                 self._load_schema(arg)
 
-    def get_uri_schemes(self) -> Iterable[str]:
+    def get_uri_schemes(self) -> typing.Iterable[str]:
         """Get URI schemes stored in repository"""
         return self._data.keys()
 
     def get_schema_ids(self,
-                       uri_schemes: Iterable[str] | None = None
-                       ) -> Iterable[str]:
+                       uri_schemes: typing.Iterable[str] | None = None
+                       ) -> typing.Iterable[str]:
         """Get schema ids stored in repository
 
         If `uri_schemes` is ``None``, all schema ids are returned. Otherwise,
@@ -83,7 +83,7 @@ class SchemaRepository:
     def validate(self,
                  schema_id: str,
                  data: Data,
-                 validator_cls: Type[Validator] = DefaultValidator):
+                 validator_cls: typing.Type[Validator] = DefaultValidator):
         """Validate data against JSON schema.
 
         Args:

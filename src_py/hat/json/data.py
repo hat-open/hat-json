@@ -1,15 +1,15 @@
 """JSON Data structures"""
 
-from typing import ForwardRef, Iterable, TypeAlias
+import typing
 
 
-Array: TypeAlias = list[ForwardRef('Data')]
+Array: typing.TypeAlias = list[typing.ForwardRef('Data')]
 """JSON Array"""
 
-Object: TypeAlias = dict[str, ForwardRef('Data')]
+Object: typing.TypeAlias = dict[str, typing.ForwardRef('Data')]
 """JSON Object"""
 
-Data: TypeAlias = None | bool | int | float | str | Array | Object
+Data: typing.TypeAlias = None | bool | int | float | str | Array | Object
 """JSON data type identifier."""
 
 
@@ -68,7 +68,7 @@ def clone(data: Data) -> Data:
 
 
 def flatten(data: Data
-            ) -> Iterable[Data]:
+            ) -> typing.Iterable[Data]:
     """Flatten JSON data
 
     If `data` is array, this generator recursively yields result of `flatten`
