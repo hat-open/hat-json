@@ -1,6 +1,0 @@
-hat-util ~= 0.6.10
-jsonpatch ~= 1.33
-jsonschema ~= 4.17.3
-pyyaml ~= 6.0
-tomli ~= 2.0.1
-tomli_w ~= 1.0.0

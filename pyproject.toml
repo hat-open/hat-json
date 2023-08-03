@@ -1,0 +1,39 @@
+[project]
+name = "hat-json"
+version = "0.5.19"
+description = "Hat JSON library"
+readme = "README.rst"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+dependencies = [
+    "hat-util ~=0.6.10",
+    "jsonpatch ~=1.33",
+    "jsonschema ~=4.17.3",
+    "pyyaml ~=6.0",
+    "tomli ~=2.0.1",
+    "tomli_w ~=1.0.0",
+]
+
+[project.urls]
+Homepage = "http://hat-open.com"
+Repository = "https://github.com/hat-open/hat-json.git"
+Documentation = "http://hat-json.hat-open.com"
+
+[project.optional-dependencies]
+dev = ["hat-doit ~=0.14.2"]
+
+[build-system]
+requires = ["hat-doit ~=0.14.2"]
+build-backend = "hat.doit.pep517"
+
+[tool.pytest.ini_options]
+testpaths = ["test_pytest"]
+asyncio_mode = "auto"
+timeout = 300
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.coverage.run]
+include = ["src_py/*"]
+data_file = "build/.coverage"

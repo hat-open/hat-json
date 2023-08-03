@@ -1,8 +1,8 @@
 from pathlib import Path
 
 from hat.doit import common
-from hat.doit.py import (build_wheel,
-                         run_pytest,
+from hat.doit.py import (get_task_build_wheel,
+                         get_task_run_pytest,
                          run_flake8)
 from hat.doit.docs import (build_sphinx,
                            build_pdoc)
@@ -37,18 +37,9 @@ def task_clean_all():
 
 def task_build():
     """Build"""
-
-    def build():
-        build_wheel(
-            src_dir=src_py_dir,
-            dst_dir=build_py_dir,
-            name='hat-json',
-            description='Hat JSON library',
-            url='https://github.com/hat-open/hat-json',
-            license=common.License.APACHE2)
-
-    return {'actions': [build],
-            'task_dep': ['json_schema_repo']}
+    return get_task_build_wheel(src_dir=src_py_dir,
+                                build_dir=build_py_dir,
+                                task_dep=['json_schema_repo'])
 
 
 def task_check():
@@ -59,8 +50,7 @@ def task_check():
 
 def task_test():
     """Test"""
-    return {'actions': [lambda args: run_pytest(pytest_dir, *(args or []))],
-            'pos_arg': 'args'}
+    return get_task_run_pytest()
 
 
 def task_docs():
