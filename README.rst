@@ -32,12 +32,17 @@ Install
 Build
 -----
 
-To install python dependencies and editable development installation, run::
+To install editable installation, together with python development
+dependencies, run::
 
     $ pip install -e '.[dev]'
 
-Build tool used for `hat-json` is `pydoit`_ (installed with other python
-dependencies). For listing available doit tasks, use::
+To install only python development dependencies, run::
+
+    $ pip install -r requirements.pip.txt
+
+Build tool used for `hat-json` is `pydoit`_. For listing available doit tasks,
+use::
 
     $ doit list
 

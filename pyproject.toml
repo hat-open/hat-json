@@ -20,10 +20,10 @@ Repository = "https://github.com/hat-open/hat-json.git"
 Documentation = "http://hat-json.hat-open.com"
 
 [project.optional-dependencies]
-dev = ["hat-doit ~=0.14.2"]
+dev = ["hat-doit ~=0.14.4"]
 
 [build-system]
-requires = ["hat-doit ~=0.14.2"]
+requires = ["hat-doit ~=0.14.4"]
 build-backend = "hat.doit.pep517"
 
 [tool.pytest.ini_options]

@@ -3,6 +3,7 @@ from pathlib import Path
 from hat.doit import common
 from hat.doit.py import (get_task_build_wheel,
                          get_task_run_pytest,
+                         get_task_run_pip_compile,
                          run_flake8)
 from hat.doit.docs import (build_sphinx,
                            build_pdoc)
@@ -15,7 +16,8 @@ __all__ = ['task_clean_all',
            'task_check',
            'task_test',
            'task_docs',
-           'task_json_schema_repo']
+           'task_json_schema_repo',
+           'task_pip_compile']
 
 
 build_dir = Path('build')
@@ -78,3 +80,8 @@ def task_json_schema_repo():
     return {'actions': [generate],
             'file_dep': src_paths,
             'targets': [json_schema_repo_path]}
+
+
+def task_pip_compile():
+    """Run pip-compile"""
+    return get_task_run_pip_compile()
