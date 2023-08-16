@@ -1,6 +1,6 @@
 [project]
 name = "hat-json"
-version = "0.5.19"
+version = "0.5.20"
 description = "Hat JSON library"
 readme = "README.rst"
 requires-python = ">=3.10"
@@ -14,16 +14,19 @@ dependencies = [
     "tomli_w ~=1.0.0",
 ]
 
+[project.scripts]
+hat-json-convert = "hat.json.convert:main"
+
 [project.urls]
 Homepage = "http://hat-open.com"
 Repository = "https://github.com/hat-open/hat-json.git"
 Documentation = "http://hat-json.hat-open.com"
 
 [project.optional-dependencies]
-dev = ["hat-doit ~=0.14.5"]
+dev = ["hat-doit ~=0.14.6"]
 
 [build-system]
-requires = ["hat-doit ~=0.14.5"]
+requires = ["hat-doit ~=0.14.6"]
 build-backend = "hat.doit.pep517"
 
 [tool.pytest.ini_options]
