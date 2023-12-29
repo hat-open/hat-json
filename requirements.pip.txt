@@ -1,4 +1,4 @@
-hat-doit ~=0.15.4
+hat-doit ~=0.15.5
 hat-util ~=0.6.10
 jsonpatch ~=1.33
 jsonschema ~=4.17.3
