@@ -206,7 +206,7 @@ def read_conf(path: pathlib.Path | None,
         return decode_stream(sys.stdin)
 
     if path:
-        return json.decode_file(path)
+        return decode_file(path)
 
     if not default_path:
         raise Exception('invalid configuration path')
@@ -216,4 +216,4 @@ def read_conf(path: pathlib.Path | None,
         if path.exists():
             break
 
-    return json.decode_file(path)
+    return decode_file(path)
