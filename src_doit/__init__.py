@@ -8,8 +8,6 @@ from hat.doit.py import (get_task_build_wheel,
 from hat.doit.docs import (build_sphinx,
                            build_pdoc)
 
-from hat import json
-
 
 __all__ = ['task_clean_all',
            'task_build',
@@ -70,16 +68,9 @@ def task_docs():
 
 def task_json_schema_repo():
     """Generate JSON Schema Repository"""
-    src_paths = list(schemas_json_dir.rglob('*.yaml'))
-
-    def generate():
-        repo = json.SchemaRepository(*src_paths)
-        data = repo.to_json()
-        json.encode_file(data, json_schema_repo_path, indent=None)
-
-    return {'actions': [generate],
-            'file_dep': src_paths,
-            'targets': [json_schema_repo_path]}
+    return common.get_task_json_schema_repo(
+        src_paths=schemas_json_dir.rglob('*.yaml'),
+        dst_path=json_schema_repo_path)
 
 
 def task_pip_requirements():

@@ -4,6 +4,7 @@ import enum
 import io
 import json
 import pathlib
+import sys
 
 import tomli
 import tomli_w
@@ -193,3 +194,24 @@ def decode_stream(stream: io.TextIOBase | io.RawIOBase,
         return tomli.load(stream)
 
     raise ValueError('unsupported format')
+
+
+def read_conf(conf_path: pathlib.Path | None,
+              *,
+              default_path: pathlib.Path | None = None,
+              default_suffixes: list[str] = ['.yaml', '.yml', '.toml', '.json'],  # NOQA
+              stdio_path: pathlib.Path | None = pathlib.Path('-')
+              ) -> Data:
+    """Read configuration formated as JSON data"""
+    path = conf_path
+
+    if not path and default_path:
+        for suffix in default_suffixes:
+            path = default_path.with_suffix(suffix)
+            if path.exists():
+                break
+
+    if stdio_path and path == stdio_path:
+        return decode_stream(sys.stdin)
+
+    return json.decode_file(path)

@@ -1,7 +1,7 @@
-hat-doit ~=0.15.5
-hat-util ~=0.6.10
+hat-doit ~=0.15.7
+hat-util ~=0.6.11
 jsonpatch ~=1.33
-jsonschema ~=4.17.3
-pyyaml ~=6.0
+jsonschema ~=4.21.1
+pyyaml ~=6.0.1
 tomli ~=2.0.1
 tomli_w ~=1.0.0

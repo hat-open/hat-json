@@ -18,7 +18,8 @@ from hat.json.encoder import (Format,
                               encode_file,
                               decode_file,
                               encode_stream,
-                              decode_stream)
+                              decode_stream,
+                              read_conf)
 from hat.json.patch import (diff,
                             patch)
 from hat.json.repository import (SchemaRepository,
@@ -48,6 +49,7 @@ __all__ = ['Array',
            'decode_file',
            'encode_stream',
            'decode_stream',
+           'read_conf',
            'diff',
            'patch',
            'SchemaRepository',
