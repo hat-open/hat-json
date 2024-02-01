@@ -196,22 +196,24 @@ def decode_stream(stream: io.TextIOBase | io.RawIOBase,
     raise ValueError('unsupported format')
 
 
-def read_conf(conf_path: pathlib.Path | None,
-              *,
+def read_conf(path: pathlib.Path | None,
               default_path: pathlib.Path | None = None,
               default_suffixes: list[str] = ['.yaml', '.yml', '.toml', '.json'],  # NOQA
               stdio_path: pathlib.Path | None = pathlib.Path('-')
               ) -> Data:
     """Read configuration formated as JSON data"""
-    path = conf_path
-
-    if not path and default_path:
-        for suffix in default_suffixes:
-            path = default_path.with_suffix(suffix)
-            if path.exists():
-                break
-
     if stdio_path and path == stdio_path:
         return decode_stream(sys.stdin)
+
+    if path:
+        return json.decode_file(path)
+
+    if not default_path:
+        raise Exception('invalid configuration path')
+
+    for suffix in default_suffixes:
+        path = default_path.with_suffix(suffix)
+        if path.exists():
+            break
 
     return json.decode_file(path)
