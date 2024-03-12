@@ -147,6 +147,9 @@ class SchemaRepository:
                 schema = dict(schema)
                 del schema['$schema']
 
+        if '$schema' not in schema:
+            schema['$schema'] = "https://json-schema.org/draft/2020-12/schema"
+
         uri = urllib.parse.urlparse(schema['id'])
         path = uri.netloc + uri.path
         if uri.scheme not in self._data:
