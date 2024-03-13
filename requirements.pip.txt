@@ -3,5 +3,6 @@ hat-util ~=0.6.13
 jsonpatch ~=1.33
 jsonschema ~=4.21.1
 pyyaml ~=6.0.1
+referencing ~=0.33.0
 tomli ~=2.0.1
 tomli_w ~=1.0.0
