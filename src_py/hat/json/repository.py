@@ -1,5 +1,6 @@
 """JSON Schema repository"""
 
+import collections
 import importlib.resources
 import itertools
 import pathlib
@@ -41,12 +42,15 @@ class SchemaRepository:
                                            Data,
                                            'SchemaRepository']):
         self._validators = weakref.WeakValueDictionary()
-        self._data = {}
+        self._data = collections.defaultdict(dict)
+
         for arg in args:
             if isinstance(arg, pathlib.PurePath):
                 self._load_path(arg)
+
             elif isinstance(arg, SchemaRepository):
                 self._load_repository(arg)
+
             else:
                 self._load_schema(arg)
 
@@ -127,8 +131,9 @@ class SchemaRepository:
         """
         if isinstance(data, pathlib.PurePath):
             data = decode_file(data)
+
         repo = SchemaRepository()
-        repo._data = data
+        repo._data.update(data)
         return repo
 
     def _load_path(self, path):
@@ -147,23 +152,22 @@ class SchemaRepository:
                 schema = dict(schema)
                 del schema['$schema']
 
-        if '$schema' not in schema:
-            schema['$schema'] = "https://json-schema.org/draft/2020-12/schema"
+        schema_id = schema.get('$id')
+        if not schema_id:
+            schema_id = schema.get('id')
+        if not schema_id:
+            raise Exception('invalid schema id')
 
-        uri = urllib.parse.urlparse(schema['id'])
+        uri = urllib.parse.urlparse(schema_id)
         path = uri.netloc + uri.path
-        if uri.scheme not in self._data:
-            self._data[uri.scheme] = {}
         if path in self._data[uri.scheme]:
             raise Exception(f"duplicate schema id {uri.scheme}://{path}")
+
         self._data[uri.scheme][path] = schema
 
     def _load_repository(self, repo):
         for k, v in repo._data.items():
-            if k not in self._data:
-                self._data[k] = v
-            else:
-                self._data[k].update(v)
+            self._data[k].update(v)
 
 
 _meta_schema_ids = {"http://json-schema.org/draft-03/schema",

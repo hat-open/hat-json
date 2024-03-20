@@ -25,4 +25,9 @@ class JsonSchemaValidator:
         except Exception:
             raise referencing.exceptions.NoSuchResource(uri)
 
+        if '$schema' not in schema:
+            schema = {
+                **schema,
+                '$schema': "https://json-schema.org/draft/2020-12/schema"}
+
         return referencing.Resource.from_contents(schema)
