@@ -1,6 +1,5 @@
----
-"$schema": "http://json-schema.org/schema#"
-id: "hat-json://logging.yaml#"
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "hat-json://logging.yaml"
 title: Logging
 description: Logging configuration
 type: object
@@ -15,7 +14,7 @@ properties:
         title: Formatters
         type: object
         patternProperties:
-            "(.)+":
+            ".+":
                 title: Formatter
                 type: object
                 properties:
@@ -31,7 +30,7 @@ properties:
         title: Filters
         type: object
         patternProperties:
-            "(.)+":
+            ".+":
                 title: Filter
                 type: object
                 properties:
@@ -43,7 +42,7 @@ properties:
         title: Handlers
         type: object
         patternProperties:
-            "(.)+":
+            ".+":
                 title: Handler
                 type: object
                 description: |
@@ -71,7 +70,7 @@ properties:
         title: Loggers
         type: object
         patternProperties:
-            "(.)+":
+            ".+":
                 title: Logger
                 type: object
                 properties:
@@ -120,4 +119,3 @@ properties:
         title: Disable existing loggers
         type: boolean
         default: true
-...

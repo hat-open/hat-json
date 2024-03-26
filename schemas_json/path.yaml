@@ -1,11 +1,9 @@
----
-"$schema": "http://json-schema.org/schema#"
-id: "hat-json://path.yaml#"
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "hat-json://path.yaml"
 title: JSON Path
 oneOf:
   - type: string
   - type: integer
   - type: array
     items:
-        "$ref": "hat-json://path.yaml#"
-...
+        "$ref": "hat-json://path.yaml"
