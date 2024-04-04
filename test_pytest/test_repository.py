@@ -82,7 +82,29 @@ def test_schema_repository_init_paths(tmp_path):
                 type: string
       '''],
      'xyz://abc1',
-     {'a': 'b', 'c': 1, 'd': 'e'})
+     {'a': 'b', 'c': 1, 'd': 'e'}),
+
+    ([r'''
+        $id: 'xyz://abc'
+        type: array
+        items:
+            $ref: 'xyz://abc#/$defs/item'
+        $defs:
+            item:
+                type: integer
+      '''],
+     'xyz://abc',
+     [1, 2, 3]),
+
+    ([r'''
+        $id: 'xyz://abc'
+        type: string
+        $defs:
+            item:
+                type: integer
+      '''],
+     'xyz://abc#/$defs/item',
+     123),
 ])
 def test_json_schema_repository_validate(validator_cls, schemas, schema_id,
                                          data):

@@ -12,11 +12,9 @@ class JsonSchemaValidator:
         self._registry = referencing.Registry(retrieve=self._retrieve)
 
     def validate(self, schema_id: str, data: Data):
-        retrieved = self._registry.get_or_retrieve(schema_id)
-        jsonschema.validate(
-            instance=data,
-            schema=retrieved.value.contents,
-            registry=self._registry)
+        jsonschema.validate(instance=data,
+                            schema={'$ref': schema_id},
+                            registry=self._registry)
 
     def _retrieve(self, uri):
         try:
