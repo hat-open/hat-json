@@ -1,8 +1,8 @@
-hat-doit ~=0.15.12
-hat-util ~=0.6.13
+hat-doit ~=0.15.16
+hat-util ~=0.6.16
 jsonpatch ~=1.33
-jsonschema ~=4.21.1
+jsonschema ~=4.22.0
 pyyaml ~=6.0.1
-referencing ~=0.33.0
+referencing ~=0.35.1
 tomli ~=2.0.1
 tomli_w ~=1.0.0
