@@ -1,5 +1,3 @@
-.. _hat-json:
-
 `hat.json` - Python JSON data library
 =====================================
 
@@ -14,9 +12,6 @@ Under JSON data, following data types are assumed:
     * Array
     * Object
 
-
-.. hat-json-equals:
-.. hat-json-flatten:
 
 Python data mappings
 --------------------
@@ -41,9 +36,9 @@ Mapping between JSON data types and built in types:
 
 According to previous mapping, this library defines following types::
 
-    Array = typing.List['Data']
-    Object = typing.Dict[str, 'Data']
-    Data = typing.Union[None, bool, int, float, str, Array, Object]
+    Array: typing.TypeAlias = typing.List['Data']
+    Object: typing.TypeAlias = typing.Dict[str, 'Data']
+    Data: typing.TypeAlias = None | bool | int | float | str | Array | Object
 
 Because in Python `bool` is subtype of `int`, ``==`` operator can't be used
 if strict comparison between JSON data is required. In this cases, function
@@ -81,40 +76,37 @@ Example usage::
     assert list(flatten(data)) == result
 
 
-.. hat-json-get:
-.. hat-json-set_:
-
 JSON data path
 --------------
 
 Path can be used as efficient reference to subset of deeply nested JSON
 data structure::
 
-    Path = typing.Union[int, str, typing.List['Path']]
+    Path: typing.TypeAlias = int | str | typing.List['Path']
 
 Determining data subset is defined by recursive algorithm which takes into
 account Path type:
 
-    * `int`
+* `int`
 
-        References specific element of input `Array` with index equal to path.
+    References specific element of input `Array` with index equal to path.
 
-    * `str`
+* `str`
 
-        References specific element of input `Object` with key equal to path.
+    References specific element of input `Object` with key equal to path.
 
-    * `list`
+* `list`
 
-        If path is empty list, input data as a whole is referenced. If list
-        has at least one element and ``head, rest = path[0], path[1:]``,
-        referenced data is equal of applying ``rest`` path to data obtained
-        as result of applying ``head`` path onto input data.
+    If path is empty list, input data as a whole is referenced. If list
+    has at least one element and ``head, rest = path[0], path[1:]``,
+    referenced data is equal of applying ``rest`` path to data obtained
+    as result of applying ``head`` path onto input data.
 
 Function `hat.json.get` is used for obtaining subset of input data referenced
 by path. If referenced subset doesn't exist, this function returns default
 value::
 
-    def get(data: Data, path: Path, default: typing.Optional[Data] = None) -> Data: ...
+    def get(data: Data, path: Path, default: Data | None = None) -> Data: ...
 
 Example usage::
 
@@ -166,9 +158,6 @@ Example usage::
     assert result == [1, 2, 3]
 
 
-.. hat-json-diff:
-.. hat-json-patch:
-
 JSON patch
 ----------
 
@@ -193,11 +182,6 @@ Example usage::
     assert result == [1, {'a': 4}, 3]
 
 
-.. hat-json-encode:
-.. hat-json-decode:
-.. hat-json-encode_file:
-.. hat-json-decode_file:
-
 Encoding/decoding
 -----------------
 
@@ -210,15 +194,16 @@ Encoding of JSON data can be based on JSON, YAML or TOML format::
 
 Encoding/decoding implementations used in `hat.json` are based on
 `json standard library <https://docs.python.org/3/library/json.html>`_ ,
-`PyYAML library <https://pypi.org/project/PyYAML/>`_ and
-`pytomlpp library <https://pypi.org/project/pytomlpp/>`_ .
+`PyYAML library <https://pypi.org/project/PyYAML/>`_,
+`tomli library <https://pypi.org/project/tomli/>`_ and
+`tomli-w library <https://pypi.org/project/tomli-w/>`_ .
 
 For encoding to string, functions `hat.json.encode` and `hat.json.decode` can
 be used::
 
     def encode(data: Data,
                format: Format = Format.JSON,
-               indent: typing.Optional[int] = None
+               indent: int | None = None
                ) -> str:
 
     def decode(data_str: str,
@@ -231,15 +216,25 @@ from path suffix::
 
     def encode_file(data: Data,
                     path: pathlib.PurePath,
-                    format: typing.Optional[Format] = None,
-                    indent: typing.Optional[int] = 4):
+                    format: Format | None = None,
+                    indent: int | None = 4):
 
     def decode_file(path: pathlib.PurePath,
-                    format: typing.Optional[Format] = None
+                    format: Format | None = None
                     ) -> Data:
 
+If encoding to opened streams is required, functions `hat.json.encode_stream`
+and `hat.json.decode_stream` can be used::
 
-.. hat-json-SchemaRepository:
+    def encode_stream(data: Data,
+                      stream: io.TextIOBase | io.RawIOBase,
+                      format: Format = Format.JSON,
+                      indent: int | None = 4):
+
+    def decode_stream(stream: io.TextIOBase | io.RawIOBase,
+                      format: Format = Format.JSON
+                      ) -> Data:
+
 
 JSON Schema
 -----------
@@ -269,8 +264,7 @@ JSON data.
         def to_json(self) -> Data: ...
 
         @staticmethod
-        def from_json(data: typing.Union[pathlib.PurePath,
-                                         Data]
+        def from_json(data: pathlib.PurePath | Data
                       ) -> 'SchemaRepository': ...
 
 

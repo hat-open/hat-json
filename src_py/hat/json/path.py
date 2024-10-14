@@ -1,5 +1,6 @@
 """JSON Path"""
 
+from collections.abc import Callable
 import collections
 import itertools
 import typing
@@ -8,7 +9,7 @@ from hat import util
 from hat.json.data import Data, flatten
 
 
-Path: typing.TypeAlias = int | str | list[typing.ForwardRef('Path')]
+Path: typing.TypeAlias = int | str | typing.List['Path']
 """JSON Path"""
 
 
@@ -205,7 +206,7 @@ class Storage:
         return self._data
 
     def register_change_cb(self,
-                           cb: typing.Callable[[Data], None]
+                           cb: Callable[[Data], None]
                            ) -> util.RegisterCallbackHandle:
         """Register data change callback"""
         return self._change_cbs.register(cb)

@@ -1,5 +1,6 @@
 """JSON Schema validator common structures"""
 
+from collections.abc import Iterable
 import typing
 
 from hat.json.data import Data
@@ -7,12 +8,12 @@ from hat.json.data import Data
 
 class Repository(typing.Protocol):
 
-    def get_uri_schemes(self) -> typing.Iterable[str]:
+    def get_uri_schemes(self) -> Iterable[str]:
         """Get URI schemes stored in repository"""
 
     def get_schema_ids(self,
-                       uri_schemes: typing.Iterable[str] | None = None
-                       ) -> typing.Iterable[str]:
+                       uri_schemes: Iterable[str] | None = None
+                       ) -> Iterable[str]:
         """Get schema ids stored in repository
 
         If `uri_schemes` is ``None``, all schema ids are returned. Otherwise,

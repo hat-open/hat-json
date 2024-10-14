@@ -1,5 +1,6 @@
 """JSON Schema repository"""
 
+from collections.abc import Iterable
 import collections
 import importlib.resources
 import itertools
@@ -54,13 +55,13 @@ class SchemaRepository:
             else:
                 self._load_schema(arg)
 
-    def get_uri_schemes(self) -> typing.Iterable[str]:
+    def get_uri_schemes(self) -> Iterable[str]:
         """Get URI schemes stored in repository"""
         return self._data.keys()
 
     def get_schema_ids(self,
-                       uri_schemes: typing.Iterable[str] | None = None
-                       ) -> typing.Iterable[str]:
+                       uri_schemes: Iterable[str] | None = None
+                       ) -> Iterable[str]:
         """Get schema ids stored in repository
 
         If `uri_schemes` is ``None``, all schema ids are returned. Otherwise,
