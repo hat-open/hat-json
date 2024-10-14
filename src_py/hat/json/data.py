@@ -1,12 +1,13 @@
 """JSON Data structures"""
 
+from collections.abc import Iterable
 import typing
 
 
-Array: typing.TypeAlias = list[typing.ForwardRef('Data')]
+Array: typing.TypeAlias = typing.List['Data']
 """JSON Array"""
 
-Object: typing.TypeAlias = dict[str, typing.ForwardRef('Data')]
+Object: typing.TypeAlias = typing.Dict[str, 'Data']
 """JSON Object"""
 
 Data: typing.TypeAlias = None | bool | int | float | str | Array | Object
@@ -30,17 +31,31 @@ def equals(a: Data,
         assert equals(1, True) is False
 
     """
-    if isinstance(a, bool) != isinstance(b, bool):
-        return False
-    if a != b:
-        return False
+    if a is None:
+        return b is None
+
+    if isinstance(a, bool):
+        return isinstance(b, bool) and a == b
+
+    if isinstance(a, (int, float)):
+        return (isinstance(b, (int, float)) and
+                not isinstance(b, bool) and
+                a == b)
+
+    if isinstance(a, str):
+        return isinstance(b, str) and a == b
+
+    if isinstance(a, list):
+        return (isinstance(b, list) and
+                len(a) == len(b) and
+                all(equals(i, j) for i, j in zip(a, b)))
 
     if isinstance(a, dict):
-        return all(equals(a[key], b[key]) for key in a)
-    elif isinstance(a, list):
-        return all(equals(i, j) for i, j in zip(a, b))
-    else:
-        return True
+        return (isinstance(b, dict) and
+                len(a) == len(b) and
+                all(equals(a[key], b[key]) for key in a.keys()))
+
+    raise TypeError('invalid json type')
 
 
 def clone(data: Data) -> Data:
@@ -67,8 +82,7 @@ def clone(data: Data) -> Data:
     return data
 
 
-def flatten(data: Data
-            ) -> typing.Iterable[Data]:
+def flatten(data: Data) -> Iterable[Data]:
     """Flatten JSON data
 
     If `data` is array, this generator recursively yields result of `flatten`
@@ -85,5 +99,6 @@ def flatten(data: Data
     if isinstance(data, list):
         for i in data:
             yield from flatten(i)
+
     else:
         yield data
