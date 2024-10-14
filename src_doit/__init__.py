@@ -59,7 +59,8 @@ def task_docs():
     def build():
         build_sphinx(src_dir=docs_dir,
                      dst_dir=build_docs_dir,
-                     project='hat-json')
+                     project='hat-json',
+                     extensions=['sphinxcontrib.programoutput'])
         build_pdoc(module='hat.json',
                    dst_dir=build_docs_dir / 'py_api')
 

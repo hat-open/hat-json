@@ -4,5 +4,6 @@ jsonpatch ~=1.33
 jsonschema ~=4.23.0
 pyyaml ~=6.0.2
 referencing ~=0.35.1
+sphinxcontrib-programoutput >=0.17
 tomli ~=2.0.1
 tomli_w ~=1.0.0
