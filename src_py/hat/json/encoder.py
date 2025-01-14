@@ -6,9 +6,13 @@ import json
 import pathlib
 import sys
 
-import tomli
 import tomli_w
 import yaml
+
+if sys.version_info[:2] >= (3, 11):
+    import tomllib as toml
+else:
+    import tomli as toml
 
 from hat.json.data import Data
 
@@ -67,7 +71,7 @@ def decode(data_str: str,
         return yaml.load(io.StringIO(data_str), Loader=loader)
 
     if format == Format.TOML:
-        return tomli.loads(data_str)
+        return toml.loads(data_str)
 
     raise ValueError('unsupported format')
 
@@ -191,7 +195,7 @@ def decode_stream(stream: io.TextIOBase | io.RawIOBase,
         return yaml.load(stream, Loader=loader)
 
     if format == Format.TOML:
-        return tomli.load(stream)
+        return toml.load(stream)
 
     raise ValueError('unsupported format')
 
