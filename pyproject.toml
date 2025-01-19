@@ -1,6 +1,6 @@
 [project]
 name = "hat-json"
-version = "0.5.29"
+version = "0.6.0"
 description = "Hat JSON library"
 readme = "README.rst"
 requires-python = ">=3.10"
@@ -28,6 +28,9 @@ Repository = "https://github.com/hat-open/hat-json.git"
 Documentation = "http://hat-json.hat-open.com"
 
 [project.optional-dependencies]
+rs = [
+    "jsonschema_rs ~=0.28.1",
+]
 dev = [
     "hat-doit ~=0.15.18",
     "sphinxcontrib-programoutput >=0.17",

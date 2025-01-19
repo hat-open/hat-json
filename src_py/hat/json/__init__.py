@@ -22,11 +22,16 @@ from hat.json.encoder import (Format,
                               read_conf)
 from hat.json.patch import (diff,
                             patch)
-from hat.json.repository import (SchemaRepository,
-                                 json_schema_repo)
-from hat.json.validator import (Validator,
-                                DefaultValidator,
-                                JsonSchemaValidator)
+from hat.json.schema import (SchemaId,
+                             Schema,
+                             SchemaRepository,
+                             create_schema_repository,
+                             merge_schema_repositories,
+                             SchemaValidator,
+                             PySchemaValidator,
+                             RsSchemaValidator,
+                             DefaultSchemaValidator,
+                             json_schema_repo)
 from hat.json import vt
 
 
@@ -52,9 +57,14 @@ __all__ = ['Array',
            'read_conf',
            'diff',
            'patch',
+           'SchemaId',
+           'Schema',
            'SchemaRepository',
+           'create_schema_repository',
+           'merge_schema_repositories',
+           'SchemaValidator',
+           'PySchemaValidator',
+           'RsSchemaValidator',
+           'DefaultSchemaValidator',
            'json_schema_repo',
-           'Validator',
-           'DefaultValidator',
-           'JsonSchemaValidator',
            'vt']

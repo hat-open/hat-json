@@ -3,29 +3,29 @@ import pytest
 from hat import json
 
 
-validator_classes = [json.JsonSchemaValidator]
+validator_classes = [json.PySchemaValidator,
+                     json.RsSchemaValidator]
 
 
-def test_schema_repository_init_empty():
-    repo = json.SchemaRepository()
-    assert not repo.to_json()
+def test_create_schema_repository_empty():
+    repo = json.create_schema_repository()
+    assert repo == {}
 
 
-def test_schema_repository_init():
+def test_create_schema_repository():
     schema = json.decode("$id: 'xyz://abc'", format=json.Format.YAML)
-    repo = json.SchemaRepository(schema)
-    assert repo.to_json()
+    repo = json.create_schema_repository(schema)
+    assert len(repo) == 1
+    assert 'xyz://abc' in repo
 
 
-def test_schema_repository_init_duplicate_id():
+def test_create_schema_repository_duplicate_id():
     schema = json.decode("id: 'xyz://abc'", format=json.Format.YAML)
-    repo = json.SchemaRepository(schema)
-    assert repo.to_json() == json.SchemaRepository(repo, repo).to_json()
     with pytest.raises(Exception):
-        json.SchemaRepository(schema, schema)
+        json.create_schema_repository(schema, schema)
 
 
-def test_schema_repository_init_paths(tmp_path):
+def test_create_schema_repository_paths(tmp_path):
     dir_path = tmp_path / 'repo'
     json_path = dir_path / 'schema.json'
     yaml_path = dir_path / 'schema.yaml'
@@ -35,9 +35,39 @@ def test_schema_repository_init_paths(tmp_path):
         f.write('{"$id": "xyz1://abc1"}')
     with open(yaml_path, 'w', encoding='utf-8') as f:
         f.write("$id: 'xyz2://abc2'")
-    repo1 = json.SchemaRepository(dir_path)
-    repo2 = json.SchemaRepository(json_path, yaml_path)
-    assert repo1.to_json() == repo2.to_json()
+    repo1 = json.create_schema_repository(dir_path)
+    repo2 = json.create_schema_repository(json_path, yaml_path)
+    assert repo1 == repo2
+
+
+def test_merge_schema_repositories():
+    schema1 = json.decode("$id: 'xyz://abc'", format=json.Format.YAML)
+    schema2 = json.decode("$id: 'xyz://cba'", format=json.Format.YAML)
+
+    repo = json.merge_schema_repositories(
+        json.create_schema_repository(schema1),
+        json.create_schema_repository(schema2))
+
+    assert len(repo) == 2
+    assert 'xyz://abc' in repo
+    assert 'xyz://cba' in repo
+
+
+def test_merge_schema_repositories_conflict():
+    schema1 = json.decode("$id: 'xyz://abc'", format=json.Format.YAML)
+    schema2 = json.decode("$id: 'xyz://abc'\ntype: integer",
+                          format=json.Format.YAML)
+
+    repo1 = json.create_schema_repository(schema1)
+    repo2 = json.create_schema_repository(schema2)
+
+    repo = json.merge_schema_repositories(repo1, repo1)
+
+    assert len(repo) == 1
+    assert 'xyz://abc' in repo
+
+    with pytest.raises(Exception):
+        json.merge_schema_repositories(repo1, repo2)
 
 
 @pytest.mark.parametrize("validator_cls", validator_classes)
@@ -45,13 +75,13 @@ def test_schema_repository_init_paths(tmp_path):
     ([r'''
         $id: 'xyz://abc'
       '''],
-     'xyz://abc#',
+     'xyz://abc',
      None),
 
     ([r'''
         id: 'xyz://abc#'
       '''],
-     'xyz://abc#',
+     'xyz://abc',
      {'a': 'b'}),
 
     ([r'''
@@ -108,10 +138,10 @@ def test_schema_repository_init_paths(tmp_path):
 ])
 def test_json_schema_repository_validate(validator_cls, schemas, schema_id,
                                          data):
-    repo = json.SchemaRepository(*[json.decode(i, format=json.Format.YAML)
-                                   for i in schemas])
-    repo.validate(schema_id, data,
-                  validator_cls=validator_cls)
+    repo = json.create_schema_repository(
+        *(json.decode(i, format=json.Format.YAML) for i in schemas))
+    validator = validator_cls(repo)
+    validator.validate(schema_id, data)
 
 
 @pytest.mark.parametrize("validator_cls", validator_classes)
@@ -125,11 +155,11 @@ def test_json_schema_repository_validate(validator_cls, schemas, schema_id,
 ])
 def test_json_schema_repository_validate_invalid(validator_cls, schemas,
                                                  schema_id, data):
-    repo = json.SchemaRepository(*[json.decode(i, format=json.Format.YAML)
-                                   for i in schemas])
+    repo = json.create_schema_repository(
+        *(json.decode(i, format=json.Format.YAML) for i in schemas))
+    validator = validator_cls(repo)
     with pytest.raises(Exception):
-        repo.validate(schema_id, data,
-                      validator_cls=validator_cls)
+        validator.validate(schema_id, data)
 
 
 @pytest.mark.parametrize("validator_cls", validator_classes)
@@ -137,11 +167,6 @@ def test_json_schema_repository_invalid_meta_schema(validator_cls):
     schema = {'$schema': 'http://invalid',
               '$id': 'xyz://abc',
               'type': 'integer'}
-    repo = json.SchemaRepository(schema)
-
-    repo.validate(schema['$id'], 123,
-                  validator_cls=validator_cls)
 
     with pytest.raises(Exception):
-        repo.validate(schema['$id'], 123.45,
-                      validator_cls=validator_cls)
+        json.create_schema_repository(schema)

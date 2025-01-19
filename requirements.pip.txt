@@ -2,6 +2,7 @@ hat-doit ~=0.15.18
 hat-util ~=0.6.17
 jsonpatch ~=1.33
 jsonschema ~=4.23.0
+jsonschema_rs ~=0.28.1
 pyyaml ~=6.0.2
 referencing ~=0.35.1
 sphinxcontrib-programoutput >=0.17
