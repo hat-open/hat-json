@@ -171,9 +171,11 @@ class RsSchemaValidator(SchemaValidator):
             raise Exception('implementation not available')
 
         self._repo = repo
+        self._defs = {i: {'$ref': i} for i in self._repo.keys()}
 
     def validate(self, schema_id: SchemaId, data: Data):
-        jsonschema_rs.validate(schema={'$ref': schema_id},
+        jsonschema_rs.validate(schema={'$ref': schema_id,
+                                       '$defs': self._defs},
                                instance=data,
                                retriever=self._retriever)
 
