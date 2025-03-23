@@ -1,18 +1,18 @@
 [project]
 name = "hat-json"
-version = "0.6.1"
+version = "0.6.2"
 description = "Hat JSON library"
 readme = "README.rst"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
 dependencies = [
-    "hat-util ~=0.6.17",
+    "hat-util ~=0.6.19",
     "jsonpatch ~=1.33",
     "jsonschema ~=4.23.0",
     "pyyaml ~=6.0.2",
     "referencing ~=0.35.1",
     "tomli ~=2.0.1; python_version<'3.11'",
-    "tomli_w ~=1.0.0",
+    "tomli_w ~=1.2.0",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -29,15 +29,15 @@ Documentation = "http://hat-json.hat-open.com"
 
 [project.optional-dependencies]
 rs = [
-    "jsonschema_rs ~=0.28.1",
+    "jsonschema_rs ~=0.29.1",
 ]
 dev = [
-    "hat-doit ~=0.16.0",
+    "hat-doit ~=0.16.2",
     "sphinxcontrib-programoutput >=0.17",
 ]
 
 [build-system]
-requires = ["hat-doit ~=0.16.0"]
+requires = ["hat-doit ~=0.16.2"]
 build-backend = "hat.doit.pep517"
 
 [tool.pytest.ini_options]
