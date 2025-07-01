@@ -26,20 +26,29 @@ class Format(enum.Enum):
 
 def encode(data: Data,
            format: Format = Format.JSON,
-           indent: int | None = None
+           indent: int | None = None,
+           sort_keys: bool = False
            ) -> str:
     """Encode JSON data.
 
     In case of TOML format, data must be JSON Object.
 
+    In case of TOML format, `indent` is ignored.
+
+    In case of YAML or TOML format, `sort_keys` is ignored.
+
     Args:
         data: JSON data
         format: encoding format
         indent: indentation size
+        sort_keys: sort object keys
 
     """
     if format == Format.JSON:
-        return json.dumps(data, indent=indent, allow_nan=False)
+        return json.dumps(data,
+                          indent=indent,
+                          sort_keys=sort_keys,
+                          allow_nan=False)
 
     if format == Format.YAML:
         dumper = (yaml.CSafeDumper if hasattr(yaml, 'CSafeDumper')
@@ -93,18 +102,24 @@ def get_file_format(path: pathlib.PurePath) -> Format:
 def encode_file(data: Data,
                 path: pathlib.PurePath,
                 format: Format | None = None,
-                indent: int | None = 4):
+                indent: int | None = 4,
+                sort_keys: bool = False):
     """Encode JSON data to file.
 
     If `format` is ``None``, encoding format is derived from path suffix.
 
     In case of TOML format, data must be JSON Object.
 
+    In case of TOML format, `indent` is ignored.
+
+    In case of YAML or TOML format, `sort_keys` is ignored.
+
     Args:
         data: JSON data
         path: file path
         format: encoding format
         indent: indentation size
+        sort_keys: sort object keys
 
     """
     if format is None:
@@ -114,7 +129,11 @@ def encode_file(data: Data,
     encoding = 'utf-8' if format != Format.TOML else None
 
     with open(path, flags, encoding=encoding) as f:
-        encode_stream(data, f, format, indent)
+        encode_stream(data=data,
+                      stream=f,
+                      format=format,
+                      indent=indent,
+                      sort_keys=sort_keys)
 
 
 def decode_file(path: pathlib.PurePath,
@@ -142,7 +161,8 @@ def decode_file(path: pathlib.PurePath,
 def encode_stream(data: Data,
                   stream: io.TextIOBase | io.RawIOBase,
                   format: Format = Format.JSON,
-                  indent: int | None = 4):
+                  indent: int | None = 4,
+                  sort_keys: bool = False):
     """Encode JSON data to stream.
 
     In case of TOML format, data must be JSON Object.
@@ -150,21 +170,32 @@ def encode_stream(data: Data,
     In case of TOML format, `stream` should be `io.RawIOBase`. For
     other formats, `io.TextIOBase` is expected.
 
+    In case of TOML format, `indent` is ignored.
+
+    In case of YAML or TOML format, `sort_keys` is ignored.
+
     Args:
         data: JSON data
         stream: output stream
         format: encoding format
         indent: indentation size
+        sort_keys: sort object keys
 
     """
     if format == Format.JSON:
-        json.dump(data, stream, indent=indent, allow_nan=False)
+        json.dump(data, stream,
+                  indent=indent,
+                  sort_keys=sort_keys,
+                  allow_nan=False)
 
     elif format == Format.YAML:
         dumper = (yaml.CSafeDumper if hasattr(yaml, 'CSafeDumper')
                   else yaml.SafeDumper)
-        yaml.dump(data, stream, indent=indent, Dumper=dumper,
-                  explicit_start=True, explicit_end=True)
+        yaml.dump(data, stream,
+                  indent=indent,
+                  Dumper=dumper,
+                  explicit_start=True,
+                  explicit_end=True)
 
     elif format == Format.TOML:
         tomli_w.dump(data, stream)

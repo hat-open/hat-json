@@ -1,4 +1,5 @@
 /.doit.db
+/.mypy_cache
 /build
 /src_py/**/json_schema_repo.json
 __pycache__
