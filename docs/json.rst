@@ -161,9 +161,9 @@ Example usage::
 JSON patch
 ----------
 
-Function `hat.json.diff` and `hat.json.patch` provide simple wrappers
-for `jsonpatch library <https://pypi.org/project/jsonpatch/>`_
-(implementation of `JSON Patch <https://tools.ietf.org/html/rfc6902>`_)::
+Function `hat.json.diff` and `hat.json.patch` implement `JSON Patch
+<https://tools.ietf.org/html/rfc6902>`_ (`hat.json.diff` delegates to `jsonpatch
+library <https://pypi.org/project/jsonpatch/>`_)::
 
     def diff(src: Data, dst: Data) -> Data: ...
 
