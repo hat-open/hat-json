@@ -1,6 +1,6 @@
 [project]
 name = "hat-json"
-version = "0.6.4"
+version = "0.6.5"
 description = "Hat JSON library"
 readme = "README.rst"
 requires-python = ">=3.10"
