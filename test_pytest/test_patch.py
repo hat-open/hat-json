@@ -51,13 +51,13 @@ data = {'a': [1, 2, [[], 123], {'b': 'abc'}],
 ])
 def test_diff(x, y, diff):
     result = json.diff(x, y)
-    assert result == diff
+    assert json.equals(result, diff)
 
 
 @pytest.mark.parametrize("x", [[], {}, 1, False, 'a', None])
 def test_patch_empty(x):
     result = json.patch(x, [])
-    assert result == x
+    assert json.equals(result, x)
 
 
 @pytest.mark.parametrize("x, diff, y", [
@@ -83,7 +83,7 @@ def test_patch_empty(x):
 ])
 def test_patch_add(x, diff, y):
     result = json.patch(x, diff)
-    assert result == y
+    assert json.equals(result, y)
 
 
 @pytest.mark.parametrize("x, diff, y", [
@@ -101,7 +101,7 @@ def test_patch_add(x, diff, y):
 ])
 def test_patch_remove(x, diff, y):
     result = json.patch(x, diff)
-    assert result == y
+    assert json.equals(result, y)
 
 
 @pytest.mark.parametrize("x, diff, y", [
@@ -119,7 +119,7 @@ def test_patch_remove(x, diff, y):
 ])
 def test_patch_replace(x, diff, y):
     result = json.patch(x, diff)
-    assert result == y
+    assert json.equals(result, y)
 
 
 @pytest.mark.parametrize("x, diff, y", [
@@ -133,7 +133,7 @@ def test_patch_replace(x, diff, y):
 ])
 def test_patch_move(x, diff, y):
     result = json.patch(x, diff)
-    assert result == y
+    assert json.equals(result, y)
 
 
 @pytest.mark.parametrize("x, diff, y", [
@@ -147,7 +147,7 @@ def test_patch_move(x, diff, y):
 ])
 def test_patch_copy(x, diff, y):
     result = json.patch(x, diff)
-    assert result == y
+    assert json.equals(result, y)
 
 
 @pytest.mark.parametrize("x, diff", [
@@ -165,11 +165,11 @@ def test_diff_example():
     src = [1, {'a': 2}, 3]
     dst = [1, {'a': 4}, 3]
     result = json.diff(src, dst)
-    assert result == [{'op': 'replace', 'path': '/1/a', 'value': 4}]
+    assert json.equals(result, [{'op': 'replace', 'path': '/1/a', 'value': 4}])
 
 
 def test_patch_example():
     data = [1, {'a': 2}, 3]
     d = [{'op': 'replace', 'path': '/1/a', 'value': 4}]
     result = json.patch(data, d)
-    assert result == [1, {'a': 4}, 3]
+    assert json.equals(result, [1, {'a': 4}, 3])
