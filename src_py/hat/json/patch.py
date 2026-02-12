@@ -4,7 +4,7 @@ import typing
 
 import jsonpatch
 
-from hat.json.data import Data
+from hat.json.data import Data, equals
 
 
 _Pointer: typing.TypeAlias = list[str]
@@ -183,7 +183,7 @@ def _copy(data: Data, from_path: _Pointer, to_path: _Pointer) -> Data:
 
 
 def _test(data: Data, path: _Pointer, value: Data) -> Data:
-    if value != _get(data, path):
+    if not equals(value, _get(data, path)):
         raise ValueError('invalid value')
 
 

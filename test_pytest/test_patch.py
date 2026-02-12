@@ -150,15 +150,29 @@ def test_patch_copy(x, diff, y):
     assert json.equals(result, y)
 
 
-@pytest.mark.parametrize("x, diff", [
+@pytest.mark.parametrize("x, diff, success", [
     (data,
-     [{'op': 'test', 'path': '', 'value': data}]),
+     [{'op': 'test', 'path': '', 'value': data}],
+     True),
 
     (data,
-     [{'op': 'test', 'path': '/a/3', 'value': {'b': 'abc'}}])
+     [{'op': 'test', 'path': '/a/3', 'value': {'b': 'abc'}}],
+     True),
+
+    (data,
+     [{'op': 'test', 'path': '/a/3', 'value': {'b': 'def'}}],
+     False),
+
+    (1,
+     [{'op': 'test', 'path': '', 'value': True}],
+     False)
 ])
-def test_patch_test(x, diff):
-    json.patch(x, diff)
+def test_patch_test(x, diff, success):
+    if success:
+        json.patch(x, diff)
+    else:
+        with pytest.raises(ValueError):
+            json.patch(x, diff)
 
 
 def test_diff_example():
