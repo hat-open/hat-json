@@ -2,8 +2,6 @@
 
 import typing
 
-import jsonpatch
-
 from hat.json.data import Data, equals
 
 
@@ -23,7 +21,102 @@ def diff(src: Data,
         assert result == [{'op': 'replace', 'path': '/1/a', 'value': 4}]
 
     """
-    return jsonpatch.JsonPatch.from_diff(src, dst).patch
+    return list(_diff(src, dst))
+
+
+def _diff(src: Data,
+          dst: Data,
+          pointer: _Pointer = []) -> typing.Iterable[Data]:
+
+    if _shallow_equals(src, dst):
+        return
+
+    if isinstance(src, list) and isinstance(dst, list):
+
+        if not src and not dst:
+            return
+
+        if not src or not dst:
+            yield {'op': 'replace',
+                   'path': _format_pointer(pointer),
+                   'value': dst}
+            return
+
+        if len(src) == len(dst):
+            for i in range(len(src)):
+                yield from _diff(src[i], dst[i], [*pointer, str(i)])
+
+        elif len(src) > len(dst):
+            dst_i = 0
+            to_remove = len(src) - len(dst)
+
+            for src_i in range(len(src)):
+
+                if dst_i < len(dst) and _shallow_equals(src[src_i],
+                                                        dst[dst_i]):
+                    dst_i += 1
+
+                elif to_remove > 0:
+                    yield {'op': 'remove',
+                           'path': _format_pointer([*pointer, str(dst_i)])}
+                    to_remove -= 1
+
+                else:
+                    yield from _diff(src[src_i], dst[dst_i],
+                                     [*pointer, str(dst_i)])
+                    dst_i += 1
+
+        else:
+            src_i = 0
+            to_add = len(dst) - len(src)
+
+            for dst_i in range(len(dst)):
+
+                if src_i < len(src) and _shallow_equals(src[src_i],
+                                                        dst[dst_i]):
+                    src_i += 1
+
+                elif to_add > 0:
+                    yield {'op': 'add',
+                           'path': _format_pointer([*pointer, str(dst_i)]),
+                           'value': dst[dst_i]}
+                    to_add -= 1
+
+                else:
+                    yield from _diff(src[src_i], dst[dst_i],
+                                     [*pointer, str(dst_i)])
+                    src_i += 1
+
+    elif isinstance(src, dict) and isinstance(dst, dict):
+
+        if not src and not dst:
+            return
+
+        if not src or not dst:
+            yield {'op': 'replace',
+                   'path': _format_pointer(pointer),
+                   'value': dst}
+            return
+
+        for k in src:
+
+            if k not in dst:
+                yield {'op': 'remove', 'path': _format_pointer([*pointer, k])}
+
+        for k in dst:
+
+            if k not in src:
+                yield {'op': 'add',
+                       'path': _format_pointer([*pointer, k]),
+                       'value': dst[k]}
+
+            else:
+                yield from _diff(src[k], dst[k], [*pointer, k])
+
+    else:
+        yield {'op': 'replace',
+               'path': _format_pointer(pointer),
+               'value': dst}
 
 
 def patch(data: Data,
@@ -210,6 +303,13 @@ def _get(data: Data, path: _Pointer) -> Data:
     raise ValueError('invalid data type')
 
 
+def _format_pointer(pointer: _Pointer) -> str:
+    if not pointer:
+        return ''
+
+    return '/' + '/'.join(_escape_pointer_segment(i) for i in pointer)
+
+
 def _parse_pointer(pointer: str) -> _Pointer:
     if pointer == '':
         return []
@@ -221,39 +321,16 @@ def _parse_pointer(pointer: str) -> _Pointer:
     return [_unescape_pointer_segment(i) for i in segments[1:]]
 
 
+def _escape_pointer_segment(segment: str) -> str:
+    return segment.replace('~', '~0').replace('/', '~1')
+
+
 def _unescape_pointer_segment(segment: str) -> str:
     return segment.replace('~1', '/').replace('~0', '~')
 
 
-# check upstream changes in jsonpatch and validate performance impact
+def _shallow_equals(a: Data, b: Data):
+    if isinstance(a, (list, dict)) or isinstance(b, (list, dict)):
+        return a is b
 
-# def _monkeypatch_jsonpatch():
-#     """Monkeypatch jsonpatch.
-
-#     Patch incorrect value comparison between ``bool`` and numeric values when
-#     diffing json serializable data.
-
-#     Comparing `False` to `0` or `0.0`; and `True` to `1` or `1.0` incorrectly
-#     results in no change.
-
-#     """
-#     def _compare_values(self, path, key, src, dst):
-
-#         if isinstance(src, jsonpatch.MutableMapping) and \
-#                 isinstance(dst, jsonpatch.MutableMapping):
-#             self._compare_dicts(jsonpatch._path_join(path, key), src, dst)
-
-#         elif isinstance(src, jsonpatch.MutableSequence) and \
-#                 isinstance(dst, jsonpatch.MutableSequence):
-#             self._compare_lists(jsonpatch._path_join(path, key), src, dst)
-
-#         elif isinstance(src, bool) == isinstance(dst, bool) and src == dst:
-#             pass
-
-#         else:
-#             self._item_replaced(path, key, dst)
-
-#     jsonpatch.DiffBuilder._compare_values = _compare_values
-
-
-# _monkeypatch_jsonpatch()
+    return equals(a, b)

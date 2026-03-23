@@ -28,10 +28,9 @@ data = {'a': [1, 2, [[], 123], {'b': 'abc'}],
      {'a': None},
      [{'op': 'replace', 'path': '/a', 'value': None}]),
 
-    # TODO should we consider 1 and 1.0 to be equal
     ({'a': 1.0},
      {'a': 1},
-     [{'op': 'replace', 'path': '/a', 'value': 1.0}]),
+     []),
 
     ({'a': ""},
      {'a': []},
@@ -47,7 +46,43 @@ data = {'a': [1, 2, [[], 123], {'b': 'abc'}],
 
     ({'a': []},
      {'a': []},
-     [])
+     []),
+
+    (data,
+     data,
+     []),
+
+    (None,
+     data,
+     [{'op': 'replace', 'path': '', 'value': data}]),
+
+    (data,
+     json.set_(data, 'c', False),
+     [{'op': 'replace', 'path': '/c', 'value': False}]),
+
+    (data,
+     json.remove(data, 'c'),
+     [{'op': 'remove', 'path': '/c'}]),
+
+    (data,
+     json.set_(data, 'd', 123),
+     [{'op': 'add', 'path': '/d', 'value': 123}]),
+
+    (data,
+     json.set_(data, ['a', 1], 5),
+     [{'op': 'replace', 'path': '/a/1', 'value': 5}]),
+
+    (data,
+     json.set_(data, 'a', ['def', *data['a']]),
+     [{'op': 'add', 'path': '/a/0', 'value': 'def'}]),
+
+    (data,
+     json.remove(data, ['a', 0]),
+     [{'op': 'remove', 'path': '/a/0'}]),
+
+    (data,
+     json.remove(data, ['a', 0]),
+     [{'op': 'remove', 'path': '/a/0'}])
 ])
 def test_diff(x, y, diff):
     result = json.diff(x, y)

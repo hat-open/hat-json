@@ -162,8 +162,7 @@ JSON patch
 ----------
 
 Function `hat.json.diff` and `hat.json.patch` implement `JSON Patch
-<https://tools.ietf.org/html/rfc6902>`_ (`hat.json.diff` delegates to `jsonpatch
-library <https://pypi.org/project/jsonpatch/>`_)::
+<https://tools.ietf.org/html/rfc6902>`_::
 
     def diff(src: Data, dst: Data) -> Data: ...
 
