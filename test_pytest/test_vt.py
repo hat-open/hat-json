@@ -26,6 +26,10 @@ from hat import json
 
     ('<div id="xyz" class="abc" style="width: 10px;"></div>',
      ['div#xyz.abc', {'attrs': {'style': 'width: 10px;'}}]),
+
+    ('<div id="xyz" xmlns:foo="http://example.com/foo">'
+     '<foo:bar><div>baz</div></foo:bar></div>',
+     ['div#xyz'])
 ])
 def test_parse(xml, vt):
     stream = io.StringIO(xml)

@@ -28,7 +28,8 @@ def parse(file: os.PathLike | xml.sax.xmlreader.InputSource
 
     Resulting structure is JSON serializable.
 
-    Namespace prefix declaration attributes (`xmlns:*`) are ignored.
+    Namespace prefix declaration attributes (`xmlns:*`) and prefixed elements
+    are ignored.
 
     Example usage::
 
@@ -86,12 +87,17 @@ class _ContentHandler(xml.sax.ContentHandler):
     def __init__(self):
         self._root = None
         self._stack = []
+        self._skip_depth = 0
 
     @property
     def root(self):
         return self._root
 
     def startElement(self, name, attrs):
+        if ':' in name or self._skip_depth:
+            self._skip_depth += 1
+            return
+
         attrs = {k.split(':')[-1]: v
                  for k, v in attrs.items()
                  if not k.startswith('xmlns:')}
@@ -110,7 +116,14 @@ class _ContentHandler(xml.sax.ContentHandler):
         self._stack.append(element)
 
     def endElement(self, name):
+        if self._skip_depth:
+            self._skip_depth -= 1
+            return
+
         self._stack.pop()
 
     def characters(self, content):
+        if self._skip_depth:
+            return
+
         self._stack[-1].append(content)
