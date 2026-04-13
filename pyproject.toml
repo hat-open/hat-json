@@ -1,16 +1,16 @@
 [project]
 name = "hat-json"
-version = "0.6.7"
+version = "0.6.8"
 description = "Hat JSON library"
 readme = "README.rst"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
 dependencies = [
-    "hat-util ~=0.6.19",
-    "jsonschema ~=4.23.0",
-    "pyyaml ~=6.0.2",
-    "referencing ~=0.35.1",
-    "tomli ~=2.0.1; python_version<'3.11'",
+    "hat-util ~=0.6.22",
+    "jsonschema ~=4.26.0",
+    "pyyaml ~=6.0.3",
+    "referencing ~=0.37.0",
+    "tomli ~=2.4.1; python_version<'3.11'",
     "tomli_w ~=1.2.0",
 ]
 classifiers = [
@@ -27,16 +27,34 @@ Repository = "https://github.com/hat-open/hat-json.git"
 Documentation = "http://hat-json.hat-open.com"
 
 [project.optional-dependencies]
-rs = [
-    "jsonschema_rs ~=0.37.4",
+rs = ["jsonschema_rs ~=0.44.1"]
+
+[dependency-groups]
+run = [
+    "hat-util ~=0.6.22",
+    "jsonschema ~=4.26.0",
+    "pyyaml ~=6.0.3",
+    "referencing ~=0.37.0",
+    "tomli ~=2.4.1; python_version<'3.11'",
+    "tomli_w ~=1.2.0",
+]
+run-rs = [
+    {include-group = "run"},
+    "jsonschema_rs ~=0.44.1"
+]
+build = [
+    {include-group = "run"},
+    "hat-doit ~=0.16.4"
 ]
 dev = [
-    "hat-doit ~=0.16.2",
+    {include-group = "run"},
+    {include-group = "run-rs"},
+    {include-group = "build"},
     "sphinxcontrib-programoutput >=0.17",
 ]
 
 [build-system]
-requires = ["hat-doit ~=0.16.2"]
+requires = ["hat-doit ~=0.16.4"]
 build-backend = "hat.doit.pep517"
 
 [tool.pytest.ini_options]
